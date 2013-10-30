@@ -11,5 +11,6 @@
 @interface CNRAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, assign, readonly) BOOL registeredForPushNotifications;
 
 @end

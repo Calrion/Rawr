@@ -10,10 +10,13 @@
 #import "CNRAppDelegate.h"
 
 @implementation CNRAppDelegate
+@synthesize registeredForPushNotifications = _registeredForPushNotifications;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [UIApplication sharedApplication].idleTimerDisabled = YES;
+  _registeredForPushNotifications = NO;
+  [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeSound)];
   return YES;
 }
 							
@@ -42,6 +45,17 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
   // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+#pragma mark - Push Notifications
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+  _registeredForPushNotifications = YES;
+  //NSString *tokenString = [[NSString alloc] initWithData:devToken encoding:NSUTF8StringEncoding];
+  NSLog(@"APNS Device token is: \"%@\".", devToken);
+}
+
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+  NSLog(@"Error in registration. Error: %@", err);
 }
 
 @end
