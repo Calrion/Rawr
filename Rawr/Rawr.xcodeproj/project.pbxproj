@@ -21,6 +21,8 @@
 		7974ACF91820ECFE00399AA2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7974ACDB1820ECFE00399AA2 /* UIKit.framework */; };
 		7974AD011820ECFE00399AA2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7974ACFF1820ECFE00399AA2 /* InfoPlist.strings */; };
 		7974AD031820ECFE00399AA2 /* RawrTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7974AD021820ECFE00399AA2 /* RawrTests.m */; };
+		7974AD0D1820EFC100399AA2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7974AD0C1820EFC100399AA2 /* AVFoundation.framework */; };
+		7974AD0F1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7974AD0E1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		7974ACFE1820ECFE00399AA2 /* RawrTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RawrTests-Info.plist"; sourceTree = "<group>"; };
 		7974AD001820ECFE00399AA2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7974AD021820ECFE00399AA2 /* RawrTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RawrTests.m; sourceTree = "<group>"; };
+		7974AD0C1820EFC100399AA2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		7974AD0E1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "T Rex Roar-SoundBible.com-394562851.wav"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7974AD0D1820EFC100399AA2 /* AVFoundation.framework in Frameworks */,
 				7974ACDA1820ECFE00399AA2 /* CoreGraphics.framework in Frameworks */,
 				7974ACDC1820ECFE00399AA2 /* UIKit.framework in Frameworks */,
 				7974ACD81820ECFE00399AA2 /* Foundation.framework in Frameworks */,
@@ -101,6 +106,7 @@
 		7974ACD61820ECFE00399AA2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7974AD0C1820EFC100399AA2 /* AVFoundation.framework */,
 				7974ACD71820ECFE00399AA2 /* Foundation.framework */,
 				7974ACD91820ECFE00399AA2 /* CoreGraphics.framework */,
 				7974ACDB1820ECFE00399AA2 /* UIKit.framework */,
@@ -126,6 +132,7 @@
 		7974ACDE1820ECFE00399AA2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				7974AD0E1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav */,
 				7974ACDF1820ECFE00399AA2 /* Rawr-Info.plist */,
 				7974ACE01820ECFE00399AA2 /* InfoPlist.strings */,
 				7974ACE31820ECFE00399AA2 /* main.m */,
@@ -232,6 +239,7 @@
 				7974ACF01820ECFE00399AA2 /* Images.xcassets in Resources */,
 				7974ACE21820ECFE00399AA2 /* InfoPlist.strings in Resources */,
 				7974ACEB1820ECFE00399AA2 /* Main.storyboard in Resources */,
+				7974AD0F1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

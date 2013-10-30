@@ -6,14 +6,15 @@
 //  Copyright (c) 2013 G Waterhouse. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import "CNRAppDelegate.h"
 
 @implementation CNRAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
-    return YES;
+
+  return YES;
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application

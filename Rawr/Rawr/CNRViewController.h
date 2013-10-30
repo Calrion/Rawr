@@ -10,4 +10,6 @@
 
 @interface CNRViewController : UIViewController
 
+- (void)didTapView:(UITapGestureRecognizer *)sender;
+
 @end
