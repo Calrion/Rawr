@@ -9,8 +9,24 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CNRAppDelegate.h"
 
-@implementation CNRAppDelegate
+#define REST_ENDPOINT @"https://secure.rgweb.org/rest/rawr/didPlaySound?deviceName=%@&deviceModel=%@&soundFile=%@&requestID=%ld"
+
+@interface CNRAppDelegate ()
+
+@property (nonatomic, strong) AVAudioPlayer *player;
+@property (nonatomic, strong) NSMutableData *restResponse;
+
+- (void)postDidPlaySound:(NSString *)soundFile
+            forRequestID:(NSUInteger)requestID;
+
+@end
+
+@implementation CNRAppDelegate {
+  NSURLConnection *webService;
+}
 @synthesize registeredForPushNotifications = _registeredForPushNotifications;
+@synthesize player = _player;
+@synthesize restResponse = _restResponse;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -47,15 +63,133 @@
   // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+#pragma mark - Properties
+
+
+#pragma mark - Helpers
+- (BOOL)playBundleResourceSound:(NSString *)resource
+{
+  return [self playBundleResourceSound:resource forRequestID:0];
+}
+
+- (BOOL)playBundleResourceSound:(NSString *)resource forRequestID:(NSUInteger)requestID
+{
+  BOOL didPlaySound = NO;
+  NSURL *soundToPlay = [[[NSBundle mainBundle] resourceURL]
+                        URLByAppendingPathComponent:resource];
+
+  AVAudioSession *session = [AVAudioSession sharedInstance];
+  if (![session setCategory:AVAudioSessionCategoryPlayback error:nil]) {
+    NSLog(@"Unable to set playback audio session!");
+  }
+
+  if (!self.player.playing) {
+    self.player = [[AVAudioPlayer alloc]
+                   initWithContentsOfURL:soundToPlay
+                   error:nil];
+
+    if (self.player) {
+      [self.player prepareToPlay];
+      [self.player play];
+      NSLog(@"Played sound '%@'.", soundToPlay);
+      [self postDidPlaySound:resource forRequestID:requestID];
+      didPlaySound = YES;
+    }
+  }
+  return didPlaySound;
+}
+
+- (void)postDidPlaySound:(NSString *)soundFile
+            forRequestID:(NSUInteger)requestID
+{
+  if (requestID != 0) {
+    NSString *escapedFile = [soundFile
+              stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *requestURL = [NSString stringWithFormat:REST_ENDPOINT,
+                            [[UIDevice currentDevice] name],
+                            [[UIDevice currentDevice] model],
+                            escapedFile,
+                            (unsigned long)requestID];
+
+    NSURLRequest *restRequest = [NSURLRequest
+                                 requestWithURL:[NSURL
+                                                 URLWithString:requestURL]];
+    if (webService) {
+      NSLog(@"Cancelling existing connection.");
+      [webService cancel];
+      webService = nil;
+    }
+    else {
+      NSLog(@"Sending did play sound notification for '%@' and request %ld.",
+            soundFile, (unsigned long)requestID);
+      webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
+    }
+  }
+}
+
+#pragma mark - NSURLConnectionDelegate
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+  if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
+    NSLog(@"Received non-HTTP response!");
+    return;
+  }
+
+  NSLog(@"Received REST response with status %ld - %@.",
+        ((long)(((NSHTTPURLResponse *)response).statusCode)),
+        [NSHTTPURLResponse localizedStringForStatusCode:((NSHTTPURLResponse *)response).statusCode]);
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+  if (!self.restResponse) {
+    self.restResponse = [[NSMutableData alloc] initWithData:data];
+  }
+  else {
+    [self.restResponse appendData:data];
+  }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+  //NSLog(@"REST response body is: %@", self.restResponse);
+  NSString *body = [[NSString alloc] initWithData:self.restResponse
+                                         encoding:NSUTF8StringEncoding];
+  NSLog(@"REST response body is: \"%@\"", body);
+  self.restResponse = nil;
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+  NSLog(@"REST request failed with error %@", error);
+}
+
 #pragma mark - Push Notifications
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken
+{
   _registeredForPushNotifications = YES;
-  //NSString *tokenString = [[NSString alloc] initWithData:devToken encoding:NSUTF8StringEncoding];
   NSLog(@"APNS Device token is: \"%@\".", devToken);
 }
 
-- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err
+{
   NSLog(@"Error in registration. Error: %@", err);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+  NSLog(@"Received APNS with userInfo %@", userInfo);
+  NSDictionary *apnsPayload = [NSDictionary dictionaryWithDictionary:userInfo];
+  if ([apnsPayload valueForKey:@"aps"] != nil) {
+    NSDictionary *aps = [apnsPayload valueForKey:@"aps"];
+    if ([aps valueForKey:@"sound"] != nil) {
+      NSString *sound = [aps valueForKey:@"sound"];
+      NSLog(@"Playing '%@' in response to APNS message.", sound);
+      [self playBundleResourceSound:sound
+                       forRequestID:[[apnsPayload valueForKey:@"request_id"]
+                                     unsignedIntegerValue]];
+    }
+  }
 }
 
 @end

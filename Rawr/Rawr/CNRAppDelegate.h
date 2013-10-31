@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CNRAppDelegate : UIResponder <UIApplicationDelegate>
+@interface CNRAppDelegate : UIResponder <UIApplicationDelegate,NSURLConnectionDataDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic, assign, readonly) BOOL registeredForPushNotifications;
+
+- (BOOL)playBundleResourceSound:(NSString *)resource;
+- (BOOL)playBundleResourceSound:(NSString *)resource forRequestID:(NSUInteger)requestID;
 
 @end

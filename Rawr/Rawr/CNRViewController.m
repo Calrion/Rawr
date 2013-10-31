@@ -8,6 +8,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import "CNRViewController.h"
+#import "CNRAppDelegate.h"
 
 @interface CNRViewController ()
 
@@ -34,9 +35,10 @@
 
 - (void)didTapView:(UITapGestureRecognizer *)sender
 {
-  if (!self.audioPlayer.playing) {
-    [self.audioPlayer play];
-  }
+  [(CNRAppDelegate *)[[UIApplication sharedApplication] delegate] playBundleResourceSound:@"T Rex Roar-SoundBible.com-394562851.wav"];
+//  if (!self.audioPlayer.playing) {
+//    [self.audioPlayer play];
+//  }
 }
 
 #pragma mark - Properties
