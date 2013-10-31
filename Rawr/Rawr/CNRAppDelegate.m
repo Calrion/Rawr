@@ -30,9 +30,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  self.window = [[UIWindow alloc]
+                 initWithFrame:[[UIScreen mainScreen] bounds]];
+  self.viewController = [[CNRViewController alloc]
+                         initWithNibName:@"Main"
+                         bundle:nil];
+  self.window.rootViewController = self.viewController;
+
   [UIApplication sharedApplication].idleTimerDisabled = YES;
   _registeredForPushNotifications = NO;
   [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeSound)];
+
+  // Let's go!
+  [self.window makeKeyAndVisible];
   return YES;
 }
 							

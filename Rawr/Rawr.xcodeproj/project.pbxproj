@@ -13,7 +13,6 @@
 		7974ACE21820ECFE00399AA2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7974ACE01820ECFE00399AA2 /* InfoPlist.strings */; };
 		7974ACE41820ECFE00399AA2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7974ACE31820ECFE00399AA2 /* main.m */; };
 		7974ACE81820ECFE00399AA2 /* CNRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7974ACE71820ECFE00399AA2 /* CNRAppDelegate.m */; };
-		7974ACEB1820ECFE00399AA2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7974ACE91820ECFE00399AA2 /* Main.storyboard */; };
 		7974ACEE1820ECFE00399AA2 /* CNRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7974ACED1820ECFE00399AA2 /* CNRViewController.m */; };
 		7974ACF01820ECFE00399AA2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7974ACEF1820ECFE00399AA2 /* Images.xcassets */; };
 		7974ACF71820ECFE00399AA2 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7974ACF61820ECFE00399AA2 /* XCTest.framework */; };
@@ -23,6 +22,7 @@
 		7974AD031820ECFE00399AA2 /* RawrTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7974AD021820ECFE00399AA2 /* RawrTests.m */; };
 		7974AD0D1820EFC100399AA2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7974AD0C1820EFC100399AA2 /* AVFoundation.framework */; };
 		7974AD0F1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7974AD0E1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav */; };
+		7974AD1818220AF100399AA2 /* Main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7974AD1718220AF100399AA2 /* Main.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,7 +46,6 @@
 		7974ACE51820ECFE00399AA2 /* Rawr-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Rawr-Prefix.pch"; sourceTree = "<group>"; };
 		7974ACE61820ECFE00399AA2 /* CNRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CNRAppDelegate.h; sourceTree = "<group>"; };
 		7974ACE71820ECFE00399AA2 /* CNRAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CNRAppDelegate.m; sourceTree = "<group>"; };
-		7974ACEA1820ECFE00399AA2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7974ACEC1820ECFE00399AA2 /* CNRViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CNRViewController.h; sourceTree = "<group>"; };
 		7974ACED1820ECFE00399AA2 /* CNRViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CNRViewController.m; sourceTree = "<group>"; };
 		7974ACEF1820ECFE00399AA2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -57,6 +56,7 @@
 		7974AD021820ECFE00399AA2 /* RawrTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RawrTests.m; sourceTree = "<group>"; };
 		7974AD0C1820EFC100399AA2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		7974AD0E1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "T Rex Roar-SoundBible.com-394562851.wav"; sourceTree = "<group>"; };
+		7974AD1718220AF100399AA2 /* Main.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Main.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,11 +120,11 @@
 			children = (
 				7974ACE61820ECFE00399AA2 /* CNRAppDelegate.h */,
 				7974ACE71820ECFE00399AA2 /* CNRAppDelegate.m */,
-				7974ACE91820ECFE00399AA2 /* Main.storyboard */,
 				7974ACEC1820ECFE00399AA2 /* CNRViewController.h */,
 				7974ACED1820ECFE00399AA2 /* CNRViewController.m */,
 				7974ACEF1820ECFE00399AA2 /* Images.xcassets */,
 				7974ACDE1820ECFE00399AA2 /* Supporting Files */,
+				7974AD1718220AF100399AA2 /* Main.xib */,
 			);
 			path = Rawr;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			files = (
 				7974ACF01820ECFE00399AA2 /* Images.xcassets in Resources */,
 				7974ACE21820ECFE00399AA2 /* InfoPlist.strings in Resources */,
-				7974ACEB1820ECFE00399AA2 /* Main.storyboard in Resources */,
+				7974AD1818220AF100399AA2 /* Main.xib in Resources */,
 				7974AD0F1820F2FE00399AA2 /* T Rex Roar-SoundBible.com-394562851.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,14 +291,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		7974ACE91820ECFE00399AA2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7974ACEA1820ECFE00399AA2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		7974ACFF1820ECFE00399AA2 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -343,7 +335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -376,7 +368,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -390,7 +382,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Rawr/Rawr-Prefix.pch";
 				INFOPLIST_FILE = "Rawr/Rawr-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -404,7 +395,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Rawr/Rawr-Prefix.pch";
 				INFOPLIST_FILE = "Rawr/Rawr-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -498,7 +488,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -512,7 +502,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Rawr/Rawr-Prefix.pch";
 				INFOPLIST_FILE = "Rawr/Rawr-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

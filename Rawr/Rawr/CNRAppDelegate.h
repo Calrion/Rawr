@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CNRViewController.h"
 
 @interface CNRAppDelegate : UIResponder <UIApplicationDelegate,NSURLConnectionDataDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) CNRViewController *viewController;
 @property (nonatomic, assign, readonly) BOOL registeredForPushNotifications;
 
 - (BOOL)playBundleResourceSound:(NSString *)resource;

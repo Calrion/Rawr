@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <OCMock.h>
 
 @interface RawrTests : XCTestCase
 
@@ -16,8 +17,9 @@
 
 - (void)setUp
 {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+  [super setUp];
+  _mockAudioPlayer = [OCMockObject mockForClass:[AVAudioPlayer class]];
+  _objUnderTest.bouncePlayer = _mockAudioPlayer;
 }
 
 - (void)tearDown
@@ -26,9 +28,12 @@
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testRemoteNotificationSound
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+  NSDictionary * const userInfo = @{@"aps": @{@"sound": @"T Rex Roar-SoundBible.com-394562851.wav"}};
+  UIApplication *app = [UIApplication sharedApplication];
+
+  [[app delegate] application:app didReceiveRemoteNotification:userInfo];
 }
 
 @end
