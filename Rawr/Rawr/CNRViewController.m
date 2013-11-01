@@ -26,16 +26,16 @@
                                    initWithTarget:self
                                    action:@selector(didTapView:)]];
 
-  AVAudioSession *session = [AVAudioSession sharedInstance];
-  if (![session setCategory:AVAudioSessionCategoryPlayback error:nil]) {
-    NSLog(@"Unable to set playback audio session!");
-  }
-  [self.audioPlayer prepareToPlay];
+//  AVAudioSession *session = [AVAudioSession sharedInstance];
+//  if (![session setCategory:AVAudioSessionCategoryPlayback error:nil]) {
+//    NSLog(@"Unable to set playback audio session!");
+//  }
+//  [self.audioPlayer prepareToPlay];
 }
 
 - (void)didTapView:(UITapGestureRecognizer *)sender
 {
-  [(CNRAppDelegate *)[[UIApplication sharedApplication] delegate] playBundleResourceSound:@"T Rex Roar-SoundBible.com-394562851.wav"];
+  [(CNRAppDelegate *)[[UIApplication sharedApplication] delegate] playBundleResourceSound:nil];
 //  if (!self.audioPlayer.playing) {
 //    [self.audioPlayer play];
 //  }

@@ -10,6 +10,8 @@
 #import "CNRAppDelegate.h"
 
 #define REST_ENDPOINT @"https://secure.rgweb.org/rest/rawr/didPlaySound?deviceName=%@&deviceModel=%@&soundFile=%@&requestID=%ld"
+#define REST_ENDPOINT_FAILURE @"https://secure.rgweb.org/rest/rawr/didPlaySound?deviceName=%@&deviceModel=%@&soundFile=%@&requestID=%ld&reason=%@"
+#define DEFAULT_SOUND_FILENAME @"dinosaur.wav"
 
 @interface CNRAppDelegate ()
 
@@ -18,6 +20,9 @@
 
 - (void)postDidPlaySound:(NSString *)soundFile
             forRequestID:(NSUInteger)requestID;
+- (void)postFailedToPlaySound:(NSString *)soundFile
+             forRequestID:(NSUInteger)requestID
+                   reason:(NSString *)reason;
 
 @end
 
@@ -85,6 +90,9 @@
 - (BOOL)playBundleResourceSound:(NSString *)resource forRequestID:(NSUInteger)requestID
 {
   BOOL didPlaySound = NO;
+
+  if (!resource) resource = DEFAULT_SOUND_FILENAME;
+
   NSURL *soundToPlay = [[[NSBundle mainBundle] resourceURL]
                         URLByAppendingPathComponent:resource];
 
@@ -105,6 +113,11 @@
       [self postDidPlaySound:resource forRequestID:requestID];
       didPlaySound = YES;
     }
+  }
+  else {
+    [self postFailedToPlaySound:resource
+                   forRequestID:requestID
+                         reason:@"alreadyPlaying"];
   }
   return didPlaySound;
 }
@@ -131,6 +144,36 @@
     }
     else {
       NSLog(@"Sending did play sound notification for '%@' and request %ld.",
+            soundFile, (unsigned long)requestID);
+      webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
+    }
+  }
+}
+
+- (void)failedToPlaySound:(NSString *)soundFile
+             forRequestID:(NSUInteger)requestID
+                   reason:(NSString *)reason
+{
+  if (requestID != 0) {
+    NSString *escapedFile = [soundFile
+                             stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *requestURL = [NSString stringWithFormat:REST_ENDPOINT_FAILURE,
+                            [[UIDevice currentDevice] name],
+                            [[UIDevice currentDevice] model],
+                            escapedFile,
+                            (unsigned long)requestID,
+                            reason];
+
+    NSURLRequest *restRequest = [NSURLRequest
+                                 requestWithURL:[NSURL
+                                                 URLWithString:requestURL]];
+    if (webService) {
+      NSLog(@"Cancelling existing connection.");
+      [webService cancel];
+      webService = nil;
+    }
+    else {
+      NSLog(@"Sending failed to play sound notification for '%@' and request %ld.",
             soundFile, (unsigned long)requestID);
       webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
     }
