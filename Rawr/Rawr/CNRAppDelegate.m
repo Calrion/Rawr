@@ -122,6 +122,7 @@
   return didPlaySound;
 }
 
+#pragma mark - RESTful Web Service
 - (void)postDidPlaySound:(NSString *)soundFile
             forRequestID:(NSUInteger)requestID
 {
@@ -142,7 +143,10 @@
       [webService cancel];
       webService = nil;
     }
-    else {
+
+    // These need to be separate statements; the if
+    // statement above should enable the one below.
+    if (!webService) {
       NSLog(@"Sending did play sound notification for '%@' and request %ld.",
             soundFile, (unsigned long)requestID);
       webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
@@ -150,7 +154,7 @@
   }
 }
 
-- (void)failedToPlaySound:(NSString *)soundFile
+- (void)postFailedToPlaySound:(NSString *)soundFile
              forRequestID:(NSUInteger)requestID
                    reason:(NSString *)reason
 {
@@ -210,11 +214,16 @@
                                          encoding:NSUTF8StringEncoding];
   NSLog(@"REST response body is: \"%@\"", body);
   self.restResponse = nil;
+  [webService cancel];
+  webService = nil;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
   NSLog(@"REST request failed with error %@", error);
+  self.restResponse = nil;
+  [webService cancel];
+  webService = nil;
 }
 
 #pragma mark - Push Notifications
@@ -238,9 +247,14 @@
     if ([aps valueForKey:@"sound"] != nil) {
       NSString *sound = [aps valueForKey:@"sound"];
       NSLog(@"Playing '%@' in response to APNS message.", sound);
-      [self playBundleResourceSound:sound
+      if ([self playBundleResourceSound:sound
                        forRequestID:[[apnsPayload valueForKey:@"request_id"]
-                                     unsignedIntegerValue]];
+                                     unsignedIntegerValue]]) {
+        NSLog(@"PLAYED APNS SOUND");
+      }
+      else {
+        NSLog(@"NO PLAY APNS SOUND");
+      }
     }
   }
 }
