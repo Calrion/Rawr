@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock.h>
 
 @interface RawrTests : XCTestCase
 
@@ -18,8 +17,6 @@
 - (void)setUp
 {
   [super setUp];
-  _mockAudioPlayer = [OCMockObject mockForClass:[AVAudioPlayer class]];
-  _objUnderTest.bouncePlayer = _mockAudioPlayer;
 }
 
 - (void)tearDown
@@ -30,7 +27,7 @@
 
 - (void)testRemoteNotificationSound
 {
-  NSDictionary * const userInfo = @{@"aps": @{@"sound": @"T Rex Roar-SoundBible.com-394562851.wav"}};
+  NSDictionary * const userInfo = @{@"aps": @{@"sound": @"dinosaur.wav"}, @"request_id": @23};
   UIApplication *app = [UIApplication sharedApplication];
 
   [[app delegate] application:app didReceiveRemoteNotification:userInfo];
