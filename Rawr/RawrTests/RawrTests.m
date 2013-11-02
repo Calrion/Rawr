@@ -38,9 +38,11 @@
 
 - (void)testRemoteNotificationSound
 {
-  NSDictionary * const userInfo = @{@"aps": @{@"sound": @"dinosaur.wav"}, @"request_id": @23};
+  NSDictionary * const userInfo = @{@"aps": @{@"sound": @"dinosaur.wav"},
+                                    @"request_id": @23};
   UIApplication *app = [UIApplication sharedApplication];
 
+  // This is really just an easier way to debug notifications
   [[app delegate] application:app didReceiveRemoteNotification:userInfo];
 }
 

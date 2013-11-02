@@ -45,7 +45,8 @@
 @synthesize player = _player;
 @synthesize restResponse = _restResponse;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL)application:(UIApplication *)application
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   self.window = [[UIWindow alloc]
                  initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -56,7 +57,8 @@
 
   [UIApplication sharedApplication].idleTimerDisabled = YES;
   _registeredForPushNotifications = NO;
-  [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeSound)];
+  [[UIApplication sharedApplication]
+   registerForRemoteNotificationTypes:(UIRemoteNotificationTypeSound)];
 
   // Let's go!
   [self.window makeKeyAndVisible];
@@ -99,7 +101,8 @@
   return [self playBundleResourceSound:resource forRequestID:0];
 }
 
-- (BOOL)playBundleResourceSound:(NSString *)resource forRequestID:(NSUInteger)requestID
+- (BOOL)playBundleResourceSound:(NSString *)resource
+                   forRequestID:(NSUInteger)requestID
 {
   BOOL didPlaySound = NO;
 
@@ -161,7 +164,8 @@
     if (!webService) {
       NSLog(@"Sending did play sound notification for '%@' and request %ld.",
             soundFile, (unsigned long)requestID);
-      webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
+      webService = [[NSURLConnection alloc] initWithRequest:restRequest
+                                                   delegate:self];
     }
   }
 }
@@ -172,7 +176,7 @@
 {
   if (requestID != 0) {
     NSString *escapedFile = [soundFile
-                             stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+              stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *requestURL = [NSString stringWithFormat:REST_ENDPOINT_FAILURE,
                             [[UIDevice currentDevice] name],
                             [[UIDevice currentDevice] model],
@@ -191,13 +195,15 @@
     else {
       NSLog(@"Sending failed to play sound notification for '%@' and request %ld.",
             soundFile, (unsigned long)requestID);
-      webService = [[NSURLConnection alloc] initWithRequest:restRequest delegate:self];
+      webService = [[NSURLConnection alloc] initWithRequest:restRequest
+                                                   delegate:self];
     }
   }
 }
 
 #pragma mark - NSURLConnectionDelegate
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)connection
+didReceiveResponse:(NSURLResponse *)response
 {
   if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
     NSLog(@"Received non-HTTP response!");
@@ -206,10 +212,12 @@
 
   NSLog(@"Received REST response with status %ld - %@.",
         ((long)(((NSHTTPURLResponse *)response).statusCode)),
-        [NSHTTPURLResponse localizedStringForStatusCode:((NSHTTPURLResponse *)response).statusCode]);
+        [NSHTTPURLResponse
+    localizedStringForStatusCode:((NSHTTPURLResponse *)response).statusCode]);
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection
+    didReceiveData:(NSData *)data
 {
   if (!self.restResponse) {
     self.restResponse = [[NSMutableData alloc] initWithData:data];
@@ -230,7 +238,8 @@
   webService = nil;
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)connection
+  didFailWithError:(NSError *)error
 {
   NSLog(@"REST request failed with error %@", error);
   self.restResponse = nil;
@@ -239,21 +248,25 @@
 }
 
 #pragma mark - Push Notifications
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken
+- (void)application:(UIApplication *)app
+  didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken
 {
   _registeredForPushNotifications = YES;
   NSLog(@"APNS Device token is: \"%@\".", devToken);
 }
 
-- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err
+- (void)application:(UIApplication *)app
+  didFailToRegisterForRemoteNotificationsWithError:(NSError *)err
 {
   NSLog(@"Error in registration. Error: %@", err);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+- (void)application:(UIApplication *)application
+  didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
   NSLog(@"Received APNS with userInfo %@", userInfo);
-  NSDictionary *apnsPayload = [NSDictionary dictionaryWithDictionary:userInfo];
+  NSDictionary *apnsPayload = [NSDictionary
+                               dictionaryWithDictionary:userInfo];
   if ([apnsPayload valueForKey:@"aps"] != nil) {
     NSDictionary *aps = [apnsPayload valueForKey:@"aps"];
     if ([aps valueForKey:@"sound"] != nil) {
