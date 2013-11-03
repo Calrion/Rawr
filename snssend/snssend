@@ -1,0 +1,191 @@
+#!/bin/bash
+#  Shell script to send an Amazon SNS notification.
+#  Written by Greg Waterhouse.
+#  Created 2013-10-31.
+#  Version 1.0.
+#
+# (c) Copyright 2013 Greg Waterhouse.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# USAGE: snssend device_name sound_file_basename
+
+# DEVICE_ID_FILE is a file with lines like:
+#
+# DeviceName=amazon-aws-device-id
+#
+# Where amazon-aws-device-id is the Amazon Endpoint ARN (which is available
+# in the management console).
+DEVICE_ID_FILE="$HOME/.snsdevices"
+
+# REQUEST_ID_FILE stores the request ID. This file will auto-create and 
+# start at 1, but you can create it with another value if you wish. The 
+# request ID is useful for tracking a request with the RESTful 
+# web service.
+REQUEST_ID_FILE="$HOME/.snsrequest_id"
+
+# APNS_PLATFORM is the Amazon SNS platform to use when sending the 
+# message. This should be "APNS_SANDBOX" when using the sandbox, or "APNS" 
+# for production.
+APNS_PLATFORM="APNS_SANDBOX"
+
+# Set DEBUG=1 for additional troubleshooting output
+DEBUG=0
+
+##### END USER CONFIGURATION OPTIONS #####
+
+
+BASEDIR=$PWD
+TMP_PREFIX="${TMPDIR-/tmp/}net.calrion.sh.sns-publish/"
+OURTMP="${TMP_PREFIX}`uuidgen`"
+OURTMP="${OURTMP/$'\n'/}"
+
+# Gather AWS credentials
+AWS_CONFIG="${AWS_CONFIG_FILE-$HOME/.aws/config}"
+if [ -f "$AWS_CONFIG_FILE" ]; then
+   AWS_KEY=`grep -A 4 "\[${AWS_DEFAULT_PROFILE-default}\]" "$AWS_CONFIG_FILE" | grep aws_access_key_id | awk '{split($0,a,"="); print a[2]}'`
+   AWS_SECRET=`grep -A 4 "\[${AWS_DEFAULT_PROFILE-default}\]" "$AWS_CONFIG_FILE" | grep aws_secret_access_key | awk '{split($0,a,"="); print a[2]}'`
+   AWS_REGION=`grep -A 4 "\[${AWS_DEFAULT_PROFILE-default}\]" "$AWS_CONFIG_FILE" | grep region | awk '{split($0,a,"="); print a[2]}'`
+else
+	AWS_KEY=${AWS_ACCESS_KEY_ID-"UNSET"}
+	AWS_SECRET=${AWS_SECRET_ACCESS_KEY-"UNSET"}
+	AWS_REGION=${AWS_DEFAULT_REGION-"UNSET"}
+fi
+if [ ${AWS_KEY} = "UNSET" -o ${AWS_KEY} = "" ]; then
+   echo "FAILED"
+   echo ""
+   echo "${0##*/}: error: Amazon AWS access key not found."; exit 1
+fi
+if [ ${AWS_SECRET} = "UNSET" -o ${AWS_SECRET} = "" ]; then
+   echo "FAILED"
+   echo ""
+   echo "${0##*/}: error: Amazon AWS secret key not found."; exit 1
+fi
+if [ ${AWS_REGION} = "UNSET" -o ${AWS_REGION} = "" ]; then
+   echo "FAILED"
+   echo ""
+   echo "${0##*/}: error: Amazon AWS region not found."; exit 1
+fi
+
+# Get the device identifier
+DEVICE_ID=`grep $1 "$DEVICE_ID_FILE"| awk '{split($0,a,"="); print a[2]}'`
+if [ "${DEVICE_ID}" = "" ]; then
+   echo "${0##*/}: error: Invalid device name."; exit 1
+fi
+
+# Update the request ID
+if [ -f "${REQUEST_ID_FILE}" ]; then
+	REQUEST_ID=`cat ${REQUEST_ID_FILE}`
+	REQUEST_ID="${REQUEST_ID/$'\n'/}"
+else
+	REQUEST_ID=0
+fi
+REQUEST_ID=`expr $REQUEST_ID + 1`
+echo "$REQUEST_ID" > "${REQUEST_ID_FILE}"
+
+# Work in temp folder
+mkdir -p $OURTMP
+cd $OURTMP
+if [ ! $PWD == $OURTMP ]; then
+	echo "${0##*/}: error: switching to temp folder failed."; exit 1
+fi
+
+URL_SCHEME="http"
+HTTP_METHOD=POST
+AWS_SERVER="sns.${AWS_REGION}.amazonaws.com"
+AWS_PATH=/
+ACTION=Publish
+UPLOAD_TIMESTAMP=`date -j +%s`
+UPLOAD_DATE=`date -j -f %s ${UPLOAD_TIMESTAMP} "+%Y-%m-%dT%H:%M:%S%z"`
+URL_DATE=`php -r "echo urlencode('${UPLOAD_DATE}');"`
+RAW_TARGET_ARN="${DEVICE_ID}"
+TARGET_ARN=`php -r "echo urlencode('${RAW_TARGET_ARN}');"`
+MESSAGE="{\"${APNS_PLATFORM}\":\"{\\\"aps\\\":{\\\"sound\\\":\\\"${2}.wav\\\"},\\\"request_id\\\":${REQUEST_ID}}\"}"
+URL_MESSAGE=`php -r "echo urlencode('${MESSAGE}');"`
+QUERY_STRING="AWSAccessKeyId=${AWS_KEY}&Action=${ACTION}&Message=${URL_MESSAGE}&MessageStructure=json&SignatureMethod=HmacSHA256&SignatureVersion=2&TargetArn=${TARGET_ARN}&Timestamp=${URL_DATE}"
+
+# Create AWS request signature (Version 2)
+touch "${OURTMP}/aws_signature_post.txt"
+echo "${HTTP_METHOD}" > "${OURTMP}/aws_signature_post.txt"
+echo "${AWS_SERVER}" >> "${OURTMP}/aws_signature_post.txt"
+echo "${AWS_PATH}" >> "${OURTMP}/aws_signature_post.txt"
+/bin/echo -n "${QUERY_STRING}" >> "${OURTMP}/aws_signature_post.txt"
+REQ_SIGNATURE=`openssl dgst -sha256 -binary -hmac ${AWS_SECRET} "${OURTMP}/aws_signature_post.txt" 2> /dev/null | openssl enc -base64`
+SIGNATURE=`php -r "echo urlencode('${REQ_SIGNATURE}');"`
+
+if [ $DEBUG -eq 1 ]; then
+	echo "Device ID: $DEVICE_ID"
+	echo "AWS Access Key ID: $AWS_KEY"
+	echo "Working folder: $OURTMP"
+	echo "Request ID is: $REQUEST_ID"
+	echo "Query string is \"$QUERY_STRING\"."
+	echo "Signature is \"$SIGNATURE\"."
+	echo
+	echo "Connecting to \"${URL_SCHEME}://${AWS_SERVER}${AWS_PATH}\"."
+	echo "Doing HTTP ${HTTP_METHOD}"
+	echo "Saving response to \"${OURTMP}/SNSReceipt.txt\"."
+	echo "Upload date: ${UPLOAD_DATE}"
+	echo "Post data: \"${QUERY_STRING}&Signature=${SIGNATURE}\"."
+	echo
+fi
+/bin/echo -n "Playing '${2}' on ${1} at ${UPLOAD_DATE}. [Request ${REQUEST_ID}: "
+
+# Now get Curl to do our dirty work!
+/usr/bin/curl "${URL_SCHEME}://${AWS_SERVER}${AWS_PATH}" \
+-X "${HTTP_METHOD}" \
+-D "${OURTMP}/SNSResponseHeaders" \
+-H "Date: ${UPLOAD_DATE}" \
+-d "${QUERY_STRING}&Signature=${SIGNATURE}" > "${OURTMP}/SNSResponseBody" 2> /dev/null
+CURL_ERROR=$?
+
+if [ $CURL_ERROR -ne 0 ]; then
+	echo "ERROR]"
+	
+	case $CURL_ERROR in
+	1)
+		ERR_DESC="Invalid protocol: '$URL_SCHEME'"
+		;;
+	2|4)
+		ERR_DESC="Unable to initialise curl"
+		;;
+	3)
+		ERR_DESC="Invalid URL: ${URL_SCHEME}://${AWS_SERVER}${AWS_PATH}"
+		;;
+	5)
+		ERR_DESC="DNS error - unable to resolve proxy"
+		;;
+	6)
+		ERR_DESC="Unknown server or DNS error: ${AWS_SERVER}"
+		;;
+	7)
+		ERR_DESC="Could not connect to host: ${AWS_SERVER}"
+		;;
+	28)
+		ERR_DESC="The operation timed out"
+		;;
+	*)
+		ERR_DESC="Unknown curl error"
+		;;
+	esac
+
+	echo "${0##*/}: error: $ERR_DESC ($CURL_ERROR)."; exit $CURL_ERROR
+else
+	echo "COMPLETE]"
+fi
+
+if [ $DEBUG -eq 1 ]; then
+	echo
+	cat "${OURTMP}/SNSResponseHeaders" "${OURTMP}/SNSResponseBody" > "${OURTMP}/SNSReceipt.txt"
+	cat "${OURTMP}/SNSReceipt.txt"
+fi
