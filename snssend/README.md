@@ -7,7 +7,6 @@ The `snssend` script is a companion to Rawr, providing the ability to send push 
 
 Where `devicename` is the name of a device listed in the device file (see below) and `soundfile` is the name of a file (sans-extension) in the Rawr app bundle.
 
-
 ## Requirements
 To effectively use `snssend`, you'll need:
 
@@ -17,7 +16,6 @@ To effectively use `snssend`, you'll need:
 * An Amazon Web Services account with Simple Notification Service enabled
 
 Configuring much of this is beyond the scope of this document, however, none of it is particularly complex and both Apple and Amazon have good documentation.
-
 
 ## Configuration
 Before use, you'll need to open the script in your favourite text editor and 
